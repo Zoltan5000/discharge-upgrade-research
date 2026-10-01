@@ -76,3 +76,20 @@ ISSUE_TAGS = {
   A real bug we caught!
 
 **Try it:** add `"pot"` to the marijuana line? Careful: `\bpot\b` would also match "pot" in cooking... words are tricky, which is why every tag says "auto-extracted."
+
+## Lesson 6: Tests are robot checkers (`tests/test_extract.py`)
+
+```python
+def test_grant_is_not_mistaken_for_denial():
+    record = parse_decision(GRANT)
+    assert record["outcome"] == "Granted"
+```
+
+- A **test** is a tiny recipe that checks another recipe still works.
+- `assert` means "this MUST be true." If it isn't, the test fails loudly.
+- We found a real bug: some granted cases were labeled "Denied" because the words "proper and equitable"
+  appeared nearby (about the reentry code). After fixing it, we wrote this test so the bug can never sneak back.
+- A test even caught Claude's own mistake today: the sample text said "arrested," which correctly
+  earns the arrest tag. The test was wrong, not the code. Tests keep everyone honest!
+
+**Try it:** run `pytest`. Eight green dots means eight checks passed.

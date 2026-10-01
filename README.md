@@ -36,6 +36,7 @@ pytest
 
 ```bash
 python -m app.search marijuana
+python -m app.search --tag "Condition outweighed discharge" --outcome Denied
 python -m app.search "positive urinalysis" --outcome Denied
 python -m app.search --tag "Marijuana / THC"          # also catches "THC", "cannabis", "Delta-8"
 python -m app.search '"liberal consideration"' --from 2025 --sort date
@@ -43,9 +44,13 @@ python -m app.search '"liberal consideration"' --from 2025 --sort date
 
 - Put quotes around an exact phrase. Search also matches word forms: `deny` finds "denied".
 - Outcome choices: `Granted`, `Granted in part`, `Denied`, `Other`.
-- Tags: Marijuana / THC, Other drug use, Positive urinalysis, Alcohol, PTSD, TBI, Other mental health,
-  MST / sexual assault, AWOL / desertion, DADT / sexual orientation, COVID-19 vaccine,
-  COVID-19 proactive review, Personal appearance hearing, Counsel present.
+- Tags, by group (see `docs/mitigating-factors.md` for why these were chosen):
+  - **Conditions and experiences:** PTSD, TBI, Depression / anxiety / other mental health, MST / sexual assault, Personal assault (victim), Domestic violence / IPV, Physical injury / chronic pain, Self-medication, Medication side effects, DADT / sexual orientation
+  - **Misconduct:** Marijuana / THC, Other drug use, Positive urinalysis, DUI / DWI, Alcohol, Larceny / theft, Assault, AWOL / desertion, Failure to report, Disobeying orders / disrespect, False statement / fraud, Weapons, Civilian arrest / conviction, Court-martial / in lieu of, COVID-19 vaccine
+  - **Mitigating factors:** Combat / deployment, Length / quality of service, Prior honorable service, Prior good conduct / awards, Post-service conduct / accomplishments, Character letters / references, Family / personal hardship, Duress / coercion, VA service connection, Discrimination / hazing, Youth / immaturity
+  - **Liberal consideration (Kurta):** Board found mitigating condition, Condition outweighed discharge, Condition did not outweigh discharge
+  - **Board's reasoning:** Found inequitable, Found improper
+  - **Procedure:** Personal appearance hearing, Counsel present, COVID-19 proactive review
 
 **Outcome, discharge types and tags are read automatically from the text and may be wrong. The official decision governs.**
 Tags skip the standard legal paragraphs that appear in every decision, so a "PTSD" tag means PTSD came up in that case's facts.
