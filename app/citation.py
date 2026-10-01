@@ -14,7 +14,10 @@ def format_citation(board, docket, decided, outcome, before, after, url):
         raise ValueError("A citation needs the official source URL.")
 
     # e.g. date(2024, 3, 5) -> "March 5, 2024"
-    date_text = f"{decided:%B} {decided.day}, {decided.year}"
+    if decided:
+        date_text = f"{decided:%B} {decided.day}, {decided.year}"
+    else:
+        date_text = "date not found; see decision"
 
     return (
         f"{board}, Docket No. {docket} ({date_text}) "

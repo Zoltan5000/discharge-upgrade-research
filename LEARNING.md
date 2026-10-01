@@ -59,3 +59,20 @@ for year in [2023, 2024, 2025, 2026]:
 - `for year in [...]` means "take each item from the list, one at a time, and call it `year`."
 - The indented lines run once for **each** item, so this prints 4 lines.
 - Our downloader will do this for ~1,000 PDFs, with a pause between each one so we stay polite to the website.
+
+## Lesson 5: A dictionary is a labeled box (`app/extract.py`)
+
+```python
+ISSUE_TAGS = {
+    "Marijuana / THC": r"marijuana|cannabis|\bTHC\b",
+    "Alcohol": r"\balcohol|\bDUI\b",
+}
+```
+
+- Curly brackets `{ }` make a **dictionary**: each item has a **label** (left of the colon) and a **value** (right).
+- Like a real dictionary: look up a word, get its meaning. `ISSUE_TAGS["Alcohol"]` gives back the alcohol search words.
+- The `|` inside the search words means "or": marijuana **or** cannabis **or** THC.
+- `\b` means "word edge." It stops `THC` from matching inside `UOTHC` (Under Other Than Honorable Conditions).
+  A real bug we caught!
+
+**Try it:** add `"pot"` to the marijuana line? Careful: `\bpot\b` would also match "pot" in cooking... words are tricky, which is why every tag says "auto-extracted."
