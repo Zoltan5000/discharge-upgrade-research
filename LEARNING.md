@@ -36,3 +36,26 @@ if not url:
 **Indentation matters:** the 4 spaces before `raise` are how Python knows that line belongs to the `if`.
 
 **Try it:** run `pytest`. One of the tests checks that this gatekeeper really says no.
+
+## Lesson 3: A list is a shopping list
+
+```python
+allowed = ["boards.law.af.mil", "www.courtlistener.com", "www.va.gov"]
+```
+
+- Square brackets `[ ]` hold the whole list; each item has its own quotes.
+- Commas go **between** the quoted items, never inside them.
+- `["a.com,b.com"]` is ONE odd item, not two. (That is why the network settings box rejected it.)
+
+## Lesson 4: A loop does the same chore many times
+
+To check how many decisions each year has, Claude did this (in the terminal's language, but Python's idea is the same):
+
+```python
+for year in [2023, 2024, 2025, 2026]:
+    print("Checking", year)
+```
+
+- `for year in [...]` means "take each item from the list, one at a time, and call it `year`."
+- The indented lines run once for **each** item, so this prints 4 lines.
+- Our downloader will do this for ~1,000 PDFs, with a pause between each one so we stay polite to the website.
