@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block main %}
+<article class="prose">
+  <h1>No decisions loaded yet</h1>
+  <p>Download decisions and build the search database first. In the terminal, from the project folder, run:</p>
+  <pre>python -m collectors.army_drb
+python -m app.build_index</pre>
+  <p>Then reload this page. The README has step-by-step instructions.</p>
+</article>
+{% endblock %}

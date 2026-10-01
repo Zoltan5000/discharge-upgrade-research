@@ -1,3 +1,5 @@
+flask
 pypdf
+python-docx
 requests
 pytest

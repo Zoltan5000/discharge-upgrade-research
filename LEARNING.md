@@ -93,3 +93,20 @@ def test_grant_is_not_mistaken_for_denial():
   earns the arrest tag. The test was wrong, not the code. Tests keep everyone honest!
 
 **Try it:** run `pytest`. Eight green dots means eight checks passed.
+
+## Lesson 7: A website is a recipe that answers web addresses (`app/web.py`)
+
+```python
+@app.route("/about")
+def about():
+    return render_template("about.html")
+```
+
+- `@app.route("/about")` is a **sign on a door**: "if someone visits /about, run the recipe below."
+- `render_template` fills in an HTML page (the `templates/` folder) and sends it to the browser.
+- When you search, your words travel in the web address: `/?q=marijuana&outcome=Denied`.
+  `request.args.get("q")` reads them back out. That's also why we switched off the request log:
+  the log would have written down everyone's searches!
+
+**Try it:** run `python -m app.web`, open http://127.0.0.1:5000/about, and change a sentence in
+`app/templates/about.html`. Refresh the page to see your change.

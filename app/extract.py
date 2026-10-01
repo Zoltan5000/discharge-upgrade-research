@@ -231,5 +231,6 @@ def parse_decision(raw_text):
         "after": after,
         "narrative_reason": before_text.split("/")[0].strip() or None,
         "tags": read_tags(flat, facts, decision),
+        "summary": decision[:700] or None,
         "text": facts,
     }

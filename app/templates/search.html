@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}{% if q.words %}{{ q.words }}: {% endif %}Discharge Upgrade Decisions{% endblock %}
+{% block main %}
+<form class="search" method="get" action="/" role="search">
+  <label for="q" class="visually-hidden">Search decisions</label>
+  <input id="q" name="q" type="search" value="{{ q.words }}" autofocus
+         placeholder='e.g. marijuana   "liberal consideration"   PTSD OR TBI   urinal*'>
+  <button type="submit">Search</button>
+  <p class="hint">Use quotes for an exact phrase, <b>OR</b> for either word, <b>NOT</b> to exclude a word,
+    and <b>*</b> for word beginnings. Tip: tags catch other wordings (the "DUI / DWI" tag also finds
+    "driving under the influence").</p>
+
+  <div class="layout">
+    <details class="filters" open>
+      <summary>Filters</summary>
+
+      <fieldset><legend>Source</legend>
+        {% for source, updated, count in sources %}
+        <label><input type="checkbox" name="source" value="{{ source }}" {% if source in q.sources %}checked{% endif %}>
+          {{ source }} <span class="count">{{ per_source.get(source, 0) }}</span></label>
+        <small class="muted">Last updated {{ updated|long_date }}</small>
+        {% endfor %}
+      </fieldset>
+
+      <fieldset><legend>Outcome</legend>
+        {% for o in outcomes %}
+        <label><input type="checkbox" name="outcome" value="{{ o }}" {% if o in q.outcomes %}checked{% endif %}> {{ o }}</label>
+        {% endfor %}
+      </fieldset>
+
+      <fieldset><legend>Decision year</legend>
+        <div class="years">
+          <label>From <input type="number" name="from" min="1990" max="2100" value="{{ q.year_from or '' }}"></label>
+          <label>To <input type="number" name="to" min="1990" max="2100" value="{{ q.year_to or '' }}"></label>
+        </div>
+      </fieldset>
+
+      <fieldset><legend>Discharge before</legend>
+        {% for d in discharges %}
+        <label><input type="checkbox" name="before" value="{{ d }}" {% if d in q.before %}checked{% endif %}> {{ d }}</label>
+        {% endfor %}
+      </fieldset>
+
+      <fieldset><legend>Discharge after</legend>
+        {% for d in discharges %}
+        <label><input type="checkbox" name="after" value="{{ d }}" {% if d in q.after %}checked{% endif %}> {{ d }}</label>
+        {% endfor %}
+      </fieldset>
+
+      <fieldset><legend>Issue tags <small>(must have all checked)</small></legend>
+        {% for group, tags in tag_choices.items() %}
+        <details class="group" {% if q.tags | select('in', tags) | list %}open{% endif %}>
+          <summary>{{ group }}</summary>
+          {% for t in tags %}
+          <label><input type="checkbox" name="tag" value="{{ t }}" {% if t in q.tags %}checked{% endif %}> {{ t }}</label>
+          {% endfor %}
+        </details>
+        {% endfor %}
+      </fieldset>
+
+      <fieldset><legend>Sort</legend>
+        <select name="sort" aria-label="Sort results">
+          {% for value, label in [("relevance", "Best match"), ("newest", "Newest first"), ("oldest", "Oldest first")] %}
+          <option value="{{ value }}" {% if q.sort == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </fieldset>
+
+      <button type="submit">Apply filters</button>
+      <a class="reset" href="/">Clear all</a>
+    </details>
+  </div>
+</form>
+
+<section class="results" aria-live="polite">
+  <div class="results-head">
+    <h1>{{ "{:,}".format(total) }} decision{{ "" if total == 1 else "s" }}</h1>
+    <div class="exports">
+      Export {% if total > 2000 %}first 2,000{% else %}all{% endif %}:
+      <a href="{{ with_args('/export', format='docx') }}">Word</a>
+      <a href="{{ with_args('/export', format='csv') }}">CSV</a>
+    </div>
+  </div>
+
+  {% if not results %}
+  <p>No decisions match. Try fewer words or filters, or check the spelling.</p>
+  {% endif %}
+
+  <form id="selected" method="get" action="/export">
+    <input type="hidden" name="selected" value="1">
+    {% if results %}
+    <div class="select-bar">
+      <label><input type="checkbox" id="select-all"> Select all on this page</label>
+      Export selected: <button name="format" value="docx">Word</button> <button name="format" value="csv">CSV</button>
+    </div>
+    {% endif %}
+
+    {% for r in results %}
+    <article class="card">
+      <header>
+        <label class="pick"><input type="checkbox" name="id" value="{{ r.id }}" aria-label="Select {{ r.docket }}"></label>
+        <div>
+          <h2>{{ r.source }}, Docket No. {{ r.docket }}</h2>
+          <p class="meta">{{ r.decided|long_date }} · {{ r.branch }}</p>
+        </div>
+      </header>
+      <p class="facts">
+        <span class="badge {{ r.outcome|lower|replace(' ', '-') }}">{{ r.outcome }}</span>
+        <span class="discharge">{{ r.discharge_before or "Unknown" }} → {{ r.discharge_after or "Unknown" }}</span>
+        {% if r.narrative_reason and r.narrative_reason != "NIF" %}<span class="muted">Reason: {{ r.narrative_reason }}</span>{% endif %}
+        <span class="auto" title="Read automatically from the decision text; may be wrong">auto-extracted</span>
+      </p>
+      {% if r.tags %}<ul class="tags">{% for t in r.tags %}<li>{{ t }}</li>{% endfor %}</ul>{% endif %}
+      {% if r.snippet %}<p class="snippet">{{ r.snippet|highlight }}</p>
+      {% elif r.summary %}<p class="snippet">{{ r.summary }}</p>{% endif %}
+      <p class="actions">
+        <a href="{{ r.url }}" target="_blank" rel="noopener">View official decision ↗</a>
+        <button type="button" class="copy" data-citation="{{ r.citation }}">Copy citation</button>
+      </p>
+    </article>
+    {% endfor %}
+  </form>
+
+  {% if pages > 1 %}
+  <nav class="pages" aria-label="Pages">
+    {% if page > 1 %}<a href="{{ with_args('/', page=page - 1) }}">← Previous</a>{% endif %}
+    <span>Page {{ page }} of {{ pages }}</span>
+    {% if page < pages %}<a href="{{ with_args('/', page=page + 1) }}">Next →</a>{% endif %}
+  </nav>
+  {% endif %}
+</section>
+
+<script>
+  // On phones, start with the filters folded so results come first.
+  if (window.innerWidth < 800) document.querySelector("details.filters").open = false;
+  // "Copy citation" buttons.
+  document.querySelectorAll(".copy").forEach(function (button) {
+    button.addEventListener("click", function () {
+      navigator.clipboard.writeText(button.dataset.citation).then(function () {
+        button.textContent = "Copied ✓";
+        setTimeout(function () { button.textContent = "Copy citation"; }, 2000);
+      });
+    });
+  });
+  // "Select all on this page" checkbox.
+  var all = document.getElementById("select-all");
+  if (all) all.addEventListener("change", function () {
+    document.querySelectorAll('#selected input[name="id"]').forEach(function (box) { box.checked = all.checked; });
+  });
+</script>
+{% endblock %}

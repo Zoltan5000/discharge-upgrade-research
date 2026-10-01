@@ -4,13 +4,13 @@ A free tool for searching past military discharge upgrade and Character of Disch
 
 > **This is a research tool, not legal advice.** Past decisions don't predict any individual outcome. The official decision always governs.
 
-**Status:** prototype in progress. Army Discharge Review Board decisions (2024 onward) can be downloaded and searched from the command line. The website comes next. See `CLAUDE.md` for the full project brief.
+**Status:** working prototype. Army Discharge Review Board decisions (2024 onward) can be downloaded and searched on a website that runs on your own computer. See `CLAUDE.md` for the full project brief.
 
 ## What's in here
 
 | Folder | What it holds |
 |---|---|
-| `app/` | The search website, plus helpers such as the citation formatter |
+| `app/` | The search website (`web.py`, `templates/`, `static/`), search, fact extraction, citations and export |
 | `collectors/` | Scripts that download decisions from each source |
 | `data/raw/` | Original downloaded files, kept as-is (not stored in GitHub) |
 | `data/processed/` | The search database built from the raw files (not stored in GitHub) |
@@ -32,14 +32,33 @@ pip install -r requirements.txt
 pytest
 ```
 
-## Search (command line, for now)
+## Use the website
+
+```bash
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+python -m app.web
+```
+
+Then open **http://127.0.0.1:5000** in your browser. Press Ctrl+C in the terminal to stop it.
+
+What you can do:
+- Search the decisions' text. Put quotes around an exact phrase, use OR / NOT, and * for word beginnings (`urinal*`).
+- Filter by source, outcome, decision year, discharge type before and after, and issue tags.
+- Each result card has **View official decision** and **Copy citation**.
+- **Export** all results, or just the ones you tick, as a Word citation list or a CSV spreadsheet.
+- The **About** page has the disclaimer, free legal help links, sources with "last updated" dates,
+  and plain-language guides (DRB vs. BCMR, the 15-year rule, "granted in part", liberal consideration).
+
+Privacy: the website does not record searches (the normal web-request log is switched off).
+
+## Search from the command line (optional)
 
 ```bash
 python -m app.search marijuana
 python -m app.search --tag "Condition outweighed discharge" --outcome Denied
 python -m app.search "positive urinalysis" --outcome Denied
-python -m app.search --tag "Marijuana / THC"          # also catches "THC", "cannabis", "Delta-8"
-python -m app.search '"liberal consideration"' --from 2025 --sort date
+python -m app.search --tag "Marijuana / THC" --tag PTSD    # tags also catch "THC", "cannabis", "Delta-8"
+python -m app.search '"liberal consideration"' --from 2025 --sort newest
 ```
 
 - Put quotes around an exact phrase. Search also matches word forms: `deny` finds "denied".

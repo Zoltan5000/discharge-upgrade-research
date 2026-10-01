@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Discharge Upgrade Decisions{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to results</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">Discharge Upgrade Decisions</a>
+      <nav><a href="/">Search</a> <a href="/about">About, guides &amp; legal help</a></nav>
+    </div>
+  </header>
+  <div class="notice" role="note">
+    <div class="wrap">
+      <strong>Research tool, not legal advice.</strong> Past decisions don't predict any individual outcome.
+      Outcomes, discharge types and tags are read automatically and may be wrong. The official decision governs.
+      <a href="/about#help">Find free legal help</a>.
+    </div>
+  </div>
+  <main id="main" class="wrap">{% block main %}{% endblock %}</main>
+  <footer class="wrap">
+    Public, already-redacted government decisions only. This site does not record what you search for.
+  </footer>
+</body>
+</html>

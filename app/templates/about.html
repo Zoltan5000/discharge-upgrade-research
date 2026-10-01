@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}About, guides & legal help: Discharge Upgrade Decisions{% endblock %}
+{% block main %}
+<article class="prose">
+  <h1>About this tool</h1>
+  <p>This site gathers past military discharge upgrade decisions from official government sources and makes them
+    searchable in one place. Every result links to the official copy of the decision.</p>
+
+  <h2 id="disclaimer">Not legal advice</h2>
+  <p>This is a research tool. It does not give legal advice, and past decisions do not predict the outcome of any
+    individual case. Each case turns on its own records and evidence. Talk to a lawyer or accredited representative
+    about your situation.</p>
+
+  <h2 id="help">Free legal help</h2>
+  <ul>
+    <li><a href="https://www.vetsprobono.org/">The Veterans Consortium Pro Bono Program</a>: free lawyers for eligible veterans, including discharge upgrades</li>
+    <li><a href="https://www.nvlsp.org/">National Veterans Legal Services Program (NVLSP)</a></li>
+    <li><a href="https://www.statesidelegal.org/">Stateside Legal</a>: free legal information for service members and veterans</li>
+    <li><a href="https://www.va.gov/ogc/apps/accreditation/">VA's search for accredited representatives</a>: Veterans Service Officers (VSOs), attorneys and claims agents</li>
+    <li>Many law schools run free veterans legal clinics; check those near you.</li>
+  </ul>
+
+  <h2 id="sources">Sources and coverage</h2>
+  <table>
+    <thead><tr><th>Source</th><th>Decisions</th><th>Last updated</th></tr></thead>
+    <tbody>
+    {% for source, updated, count in sources %}
+      <tr><td>{{ source }}</td><td>{{ "{:,}".format(count) }}</td><td>{{ updated|long_date }}</td></tr>
+    {% else %}
+      <tr><td colspan="3">No data loaded yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p>The Army Discharge Review Board decisions come from the
+    <a href="https://boards.law.af.mil/">DoD Boards Reading Room</a>. More boards and courts will be added.</p>
+
+  <h2 id="auto">About "auto-extracted" information</h2>
+  <p>The outcome, the discharge type before and after, and the issue tags are read from each decision by a
+    computer program. It is usually right but can make mistakes, especially for documents with scanned pages.
+    <strong>The official decision always governs.</strong> Tags only look at the facts of each case, not the
+    standard legal paragraphs every decision repeats. For example, a "PTSD" tag means PTSD came up in that case.</p>
+
+  <h1 id="guides">Plain-language guides</h1>
+
+  <h2 id="drb-bcmr">Discharge Review Board vs. Board for Correction</h2>
+  <p>Each military department has two kinds of boards that can upgrade a discharge:</p>
+  <ul>
+    <li><strong>Discharge Review Board (DRB).</strong> Reviews administrative discharges. You must apply within
+      <strong>15 years</strong> of your discharge (form DD 293). The DRB can change the characterization of service
+      and the narrative reason. It cannot change a discharge given by a general court-martial. You can ask for a
+      records review or a personal appearance hearing.</li>
+    <li><strong>Board for Correction of Military (or Naval) Records (BCMR / BCNR).</strong> Can correct any error
+      or injustice in a military record, including a discharge (form DD 149). It's the route after the 15-year DRB
+      window closes, or after the DRB says no. There is a 3-year filing deadline from when you discovered the error,
+      but boards often waive it "in the interest of justice."</li>
+    <li><strong>Discharge Appeal Review Board (DARB).</strong> A Defense Department-level board, established in 2024,
+      for a final review after a service DRB denies an upgrade.</li>
+  </ul>
+
+  <h2 id="fifteen-years">The 15-year rule</h2>
+  <p>Discharge Review Boards can only hear cases filed within 15 years of the date of discharge. After that, the
+    Board for Correction of Military/Naval Records is the place to apply.</p>
+
+  <h2 id="partial">What "granted in part" means</h2>
+  <p>The board gave some, but not all, of the relief asked for. For example, it changed the narrative reason or
+    reentry code but did not upgrade the characterization of service. In this tool, "Granted in part" means the
+    board granted relief but the characterization stayed the same. An upgrade that's smaller than what was requested
+    (say, Other Than Honorable to General when Honorable was asked for) shows as "Granted," with the before → after
+    discharge types, so check the decision for details.</p>
+
+  <h2 id="liberal">Liberal consideration</h2>
+  <p>Since 2014, a series of Defense Department memos has told the boards to give "liberal consideration" to
+    veterans whose discharges may have been affected by mental health conditions or experiences:</p>
+  <ul>
+    <li><strong>Hagel memo (2014):</strong> PTSD.</li>
+    <li><strong>Kurta memo (2017):</strong> expanded to all mental health conditions, including TBI, and to sexual
+      assault and sexual harassment.</li>
+    <li><strong>Wilkie memo (2018):</strong> guidance on equity, injustice and clemency, including weight for
+      post-service conduct.</li>
+  </ul>
+  <p>Congress has also written liberal consideration into the laws governing these boards (10 U.S.C. §§ 1552 and 1553).
+    Under the Kurta memo, boards ask four questions:</p>
+  <ol>
+    <li>Did the veteran have a condition or experience that may excuse or mitigate the discharge?</li>
+    <li>Did that condition exist, or that experience occur, during military service?</li>
+    <li>Does that condition or experience actually excuse or mitigate the discharge?</li>
+    <li>Does that condition or experience outweigh the discharge?</li>
+  </ol>
+  <p>Army decisions answer these questions in writing, and this tool turns the answers into tags you can filter on:
+    "Board found mitigating condition" (question 1), and "Condition outweighed discharge" or "Condition did not
+    outweigh discharge" (question 4).</p>
+
+  <h2 id="privacy">Privacy</h2>
+  <p>This site uses only public decisions that the government has already redacted. It does not record what you
+    search for and does not try to identify anyone in a decision.</p>
+</article>
+{% endblock %}

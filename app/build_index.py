@@ -30,6 +30,7 @@ CREATE TABLE decisions (
     discharge_before TEXT,         -- auto-extracted
     discharge_after TEXT,          -- auto-extracted
     narrative_reason TEXT,         -- auto-extracted
+    summary TEXT,                  -- the Board's decision paragraph
     tags TEXT,                     -- JSON list, auto-extracted
     url TEXT NOT NULL,
     collected TEXT NOT NULL
@@ -67,7 +68,7 @@ def build():
             continue
         cursor = db.execute(
             "INSERT INTO decisions (source, branch, docket, decided, outcome, discharge_before,"
-            " discharge_after, narrative_reason, tags, url, collected) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            " discharge_after, narrative_reason, summary, tags, url, collected) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
             (
                 "Army Discharge Review Board",
                 "Army",
@@ -77,6 +78,7 @@ def build():
                 record["before"],
                 record["after"],
                 record["narrative_reason"],
+                record["summary"],
                 json.dumps(record["tags"]),
                 f"{SITE}ARMY/DRB/{pdf.parent.name}/{pdf.name}",
                 date.fromtimestamp(pdf.stat().st_mtime).isoformat(),
@@ -84,7 +86,8 @@ def build():
         )
         db.execute("INSERT INTO decisions_fts (rowid, text) VALUES (?, ?)", (cursor.lastrowid, record["text"]))
 
-    db.execute("INSERT INTO sources VALUES ('Army Discharge Review Board', ?)", (date.today().isoformat(),))
+    # "Last updated" = the newest download date for each source.
+    db.execute("INSERT INTO sources SELECT source, MAX(collected) FROM decisions GROUP BY source")
     db.commit()
     db.close()
     print(f"Indexed {len(pdfs) - problems} decisions into {DB_PATH} ({problems} could not be read)")
