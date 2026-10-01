@@ -21,3 +21,18 @@ print(f"Hello from the {name}")   # Hello from the Army Discharge Review Board
 ```
 
 **Try it:** run `python -m app.citation`. Then open the file, change `"Granted"` to `"Denied"` near the bottom, and run it again.
+
+## Lesson 2: `if` is a gatekeeper (`app/citation.py`)
+
+```python
+if not url:
+    raise ValueError("A citation needs the official source URL.")
+```
+
+- `if` asks a yes/no question. If the answer is yes, Python runs the indented lines underneath.
+- `not url` means "is the link missing?" An empty `""` counts as missing.
+- `raise` stops everything and shows an error message. It's like a guard saying "you can't come in without a ticket."
+
+**Indentation matters:** the 4 spaces before `raise` are how Python knows that line belongs to the `if`.
+
+**Try it:** run `pytest`. One of the tests checks that this gatekeeper really says no.
